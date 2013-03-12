@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod spec lint KFDropView.podspec' to ensure this is a
+# Be sure to run `pod spec lint KFURLBar.podspec' to ensure this is a
 # valid spec.
 #
 # Remove all comments before submitting the spec. Optional attributes are commented.
@@ -75,7 +75,7 @@ Pod::Spec.new do |s|
   # over the selected files.
   # (See http://rake.rubyforge.org/classes/Rake/FileList.html.)
   #
-  s.source_files = 'KFToolbar/Sources/**/*.{h,m}'
+  s.source_files = 'KFURLBar/Sources/**/*.{h,m}'
 
   # A list of file patterns which select the header files that should be
   # made available to the application. If the pattern is a directory then the
