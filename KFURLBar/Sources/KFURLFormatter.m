@@ -48,6 +48,10 @@
 
 - (NSString *)stringForObjectValue:(id)object
 {
+    if (![object isKindOfClass:[NSString class]])
+    {
+        return nil;
+    }
     return (NSString *)object;
 }
 

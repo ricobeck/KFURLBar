@@ -7,6 +7,15 @@
 //
 
 #import "AppDelegate.h"
+#import "KFURLBar.h"
+
+@interface AppDelegate () <KFURLBarDelegate>
+
+@property (weak) IBOutlet KFURLBar *urlBar;
+@property (nonatomic) float progress;
+
+@end
+
 
 @implementation AppDelegate
 
@@ -17,7 +26,40 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
+    self.urlBar.delegate = self;
 }
+
+
+#pragma mark - KFURLBarDelegate Methods
+
+
+- (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url
+{
+    NSLog(@"loading %@", url);
+    self.progress = .0f;
+    urlBar.progressPhase = KFProgressPhasePending;
+    
+    [self performSelector:@selector(updateProgress) withObject:nil afterDelay:1.0f];
+}
+
+
+- (void)updateProgress
+{
+    self.urlBar.progressPhase = KFProgressPhaseDownloading;
+    self.progress += .05;
+    self.urlBar.progress = self.progress;
+    if (self.progress < 1.0)
+    {
+        [self performSelector:@selector(updateProgress) withObject:nil afterDelay:.2f];
+    }
+    else
+    {
+        self.urlBar.progressPhase = KFProgressPhaseNone;
+    }
+}
+
+
+#pragma mark - CoreData Stack
 
 // Returns the directory the application uses to store the Core Data store file. This code uses a directory named "com.kfinteractive.osx.KFURLBar" in the user's Application Support directory.
 - (NSURL *)applicationFilesDirectory
