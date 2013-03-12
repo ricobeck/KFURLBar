@@ -26,7 +26,10 @@ typedef NS_ENUM(NSUInteger, BarProgressPhase)
 
 
 @optional
+
 - (void)urlBarColorConfig;
+
+- (BOOL)urlBar:(KFURLBar *)urlBar isValidRequestStringValue:(NSString *)requestString;
 
 
 @end

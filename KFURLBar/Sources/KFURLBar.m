@@ -77,7 +77,7 @@
     self.urlTextField = [[NSTextField alloc] init];
     self.urlTextField.translatesAutoresizingMaskIntoConstraints = NO;
     self.urlTextField.bezeled = NO;
-     self.urlTextField.stringValue = @"http://";
+    self.urlTextField.stringValue = @"http://";
     self.urlTextField.focusRingType = NSFocusRingTypeNone;
     self.urlTextField.drawsBackground = NO;
     self.urlTextField.textColor = [NSColor blackColor];
@@ -87,12 +87,6 @@
     self.urlTextField.target = self;
     [self addSubview:self.urlTextField];
     
-    NSLayoutConstraint *textFieldCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-    NSLayoutConstraint *textFieldLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:20];
-    NSLayoutConstraint *textFieldTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-85];
-
-    [self addConstraints:@[textFieldCenterYConstraint, textFieldLeadingConstraint, textFieldTrailingConstraint]];
-    
     self.loadButton = [[NSButton alloc] init];
     self.loadButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.loadButton setBezelStyle:NSTexturedRoundedBezelStyle];
@@ -101,9 +95,20 @@
     self.loadButton.title = @"Load";
     [self addSubview:self.loadButton];
     
+    NSView *urlTextField = self.urlTextField;
+    NSView *loadButton = self.loadButton;
+    NSDictionary *views = NSDictionaryOfVariableBindings(urlTextField, loadButton);
+    
+    NSLayoutConstraint *textFieldCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
+//    NSLayoutConstraint *textFieldLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:20];
+//    NSLayoutConstraint *textFieldTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-85];
+    
+    [self addConstraints:@[textFieldCenterYConstraint]];
+    
     NSLayoutConstraint *loadButtonCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-    NSLayoutConstraint *loadButtonTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-20];
-    [self addConstraints:@[loadButtonCenterYConstraint, loadButtonTrailingConstraint]];
+//    NSLayoutConstraint *loadButtonTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-20];
+    [self addConstraints:@[loadButtonCenterYConstraint]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[urlTextField]-(21)-[loadButton]-(8)-|" options:0 metrics:nil views:views]];
 }
 
 
@@ -126,26 +131,23 @@
 
 - (BOOL)validateUrl:(NSString *)candidate
 {
-    NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
-    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
-    return [urlTest evaluateWithObject:candidate];
+    if ([self.delegate respondsToSelector:@selector(urlBar:isValidRequestStringValue:)])
+    {
+        return [self.delegate urlBar:self isValidRequestStringValue:candidate];
+    }
+    else
+    {
+        NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+        NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+        return [urlTest evaluateWithObject:candidate];
+    }
 }
 
 
 - (CGFloat)barWidthForProtocol
 {
-    if ([self.urlTextField.stringValue hasPrefix:@"https"])
-    {
-        return 60;
-    }
-    else if ([self.urlTextField.stringValue hasPrefix:@"http"])
-    {
-        return 50;
-    }
-    else
-    {
-        return .0;
-    }
+    NSString *measureString = [self.urlTextField.stringValue substringToIndex:[self.urlTextField.stringValue rangeOfString:@"://"].location + 3];
+    return [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width + 8.0f;
 }
 
 
@@ -166,7 +168,6 @@
             color5 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 0.774 alpha: 0];
             break;
         case KFProgressPhaseDownloading:
-            
             color4 = [NSColor colorForControlTint:[NSColor currentControlTint]];
             color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.1f];
         default:
@@ -234,12 +235,12 @@
             barWidth = MAX(barEnd * self.progress, 57);
             break;
     }
+    NSLog(@"calculated bar width: %f", barWidth);
     
     if (barWidth > 0)
     {
         CGFloat addressBarProgressCornerRadius = 10;
-        CGFloat progressWidth = MAX(barEnd * self.progress, 57);
-        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, progressWidth, NSHeight(frame) - 10);
+        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 10);
         NSRect addressBarProgressInnerRect = NSInsetRect(addressBarProgressRect, addressBarProgressCornerRadius, addressBarProgressCornerRadius);
         NSBezierPath* addressBarProgressPath = [NSBezierPath bezierPath];
         [addressBarProgressPath appendBezierPathWithArcWithCenter: NSMakePoint(NSMinX(addressBarProgressInnerRect), NSMinY(addressBarProgressInnerRect)) radius: addressBarProgressCornerRadius startAngle: 180 endAngle: 270];

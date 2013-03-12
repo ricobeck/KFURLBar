@@ -43,6 +43,14 @@
 }
 
 
+- (BOOL)urlBar:(KFURLBar *)urlBar isValidRequestStringValue:(NSString *)requestString
+{
+    NSString *urlRegEx = @"(ftp|http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+    return [urlTest evaluateWithObject:requestString];
+}
+
+
 - (void)updateProgress
 {
     self.urlBar.progressPhase = KFProgressPhaseDownloading;
@@ -57,6 +65,8 @@
         self.urlBar.progressPhase = KFProgressPhaseNone;
     }
 }
+
+
 
 
 #pragma mark - CoreData Stack
