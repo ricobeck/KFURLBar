@@ -235,7 +235,6 @@
             barWidth = MAX(barEnd * self.progress, 57);
             break;
     }
-    NSLog(@"calculated bar width: %f", barWidth);
     
     if (barWidth > 0)
     {

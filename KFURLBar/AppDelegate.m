@@ -35,7 +35,6 @@
 
 - (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url
 {
-    NSLog(@"loading %@", url);
     self.progress = .0f;
     urlBar.progressPhase = KFProgressPhasePending;
     
