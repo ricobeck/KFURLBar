@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 KF Interactive. All rights reserved.
 //
 
-#import "KFURLBarView.h"
+#import "KFURLBar.h"
 #import "KFURLFormatter.h"
 
 #define kKFURLBarGradientColorTop [NSColor colorWithCalibratedRed:0.9f green:0.9f blue:0.9f alpha:1.0f]
@@ -16,17 +16,18 @@
 #define kKFURLBarBorderColorBottom [NSColor colorWithDeviceWhite:0.2 alpha:1.0f]
 
 
-@interface KFURLBarView ()
+@interface KFURLBar ()
 
 @property (nonatomic, strong) NSColor *currentBarColorTop;
 @property (nonatomic, strong) NSColor *currentBarColorBottom;
 @property (nonatomic, strong) NSTextField *urlTextField;
+@property (nonatomic, strong) NSButton *loadButton;
 
 
 @end
 
 
-@implementation KFURLBarView
+@implementation KFURLBar
 
 
 - (id)initWithCoder:(NSCoder *)coder
@@ -63,17 +64,10 @@
 }
 
 
-- (void)awakeFromNib
-{
-    [self initializeDefaults];
-}
-
-
-
 - (void)initializeDefaults
 {
     _progress = .0f;
-    _progressPhase = BarProgressPhasePending;
+    _progressPhase = KFProgressPhaseNone;
     self.gradientColorTop = kKFURLBarGradientColorTop;
     self.gradientColorBottom = kKFURLBarGradientColorBottom;
 
@@ -81,23 +75,79 @@
     self.borderColorBottom = kKFURLBarBorderColorBottom;
     
     self.urlTextField = [[NSTextField alloc] init];
+    self.urlTextField.translatesAutoresizingMaskIntoConstraints = NO;
     self.urlTextField.bezeled = NO;
+    self.urlTextField.stringValue = @"http://";
     self.urlTextField.focusRingType = NSFocusRingTypeNone;
     self.urlTextField.drawsBackground = NO;
     self.urlTextField.textColor = [NSColor blackColor];
-    self.urlTextField.editable = YES;
     [self.urlTextField.cell setLineBreakMode:NSLineBreakByTruncatingTail];
-    self.urlTextField.translatesAutoresizingMaskIntoConstraints = NO;
     self.urlTextField.formatter = [[KFURLFormatter alloc] init];
+    self.urlTextField.action = @selector(didPressEnter:);
+    self.urlTextField.target = self;
     [self addSubview:self.urlTextField];
     
+    self.loadButton = [[NSButton alloc] init];
+    self.loadButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.loadButton setBezelStyle:NSTexturedRoundedBezelStyle];
+    self.loadButton.target = self;
+    self.loadButton.action = @selector(didPressEnter:);
+    self.loadButton.title = @"Load";
+    [self addSubview:self.loadButton];
+    
+    NSView *urlTextField = self.urlTextField;
+    NSView *loadButton = self.loadButton;
+    NSDictionary *views = NSDictionaryOfVariableBindings(urlTextField, loadButton);
+    
     NSLayoutConstraint *textFieldCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-    NSLayoutConstraint *textFieldLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:20];
-    NSLayoutConstraint *textFieldTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-95];
+//    NSLayoutConstraint *textFieldLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:20];
+//    NSLayoutConstraint *textFieldTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-85];
+    
+    [self addConstraints:@[textFieldCenterYConstraint]];
+    
+    NSLayoutConstraint *loadButtonCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
+//    NSLayoutConstraint *loadButtonTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-20];
+    [self addConstraints:@[loadButtonCenterYConstraint]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[urlTextField]-(21)-[loadButton]-(8)-|" options:0 metrics:nil views:views]];
+}
 
-    [self addConstraints:@[textFieldCenterYConstraint, textFieldLeadingConstraint, textFieldTrailingConstraint]];
-    
-    
+
+- (void)didPressEnter:(id)sender
+{
+    if (self.delegate && [self validateUrl:self.urlTextField.stringValue])
+    {
+        [self.delegate urlBar:self didRequestURL:[NSURL URLWithString:self.urlTextField.stringValue]];
+        
+        double delayInSeconds = .0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            NSText *fieldEditor = [self.urlTextField.window fieldEditor:YES forObject:self.urlTextField];
+            fieldEditor.selectedRange = NSMakeRange(0, 0);
+            [self.urlTextField.window makeFirstResponder:nil];
+        });
+    }
+}
+
+
+- (BOOL)validateUrl:(NSString *)candidate
+{
+    if ([self.delegate respondsToSelector:@selector(urlBar:isValidRequestStringValue:)])
+    {
+        return [self.delegate urlBar:self isValidRequestStringValue:candidate];
+    }
+    else
+    {
+        NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+        NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+        return [urlTest evaluateWithObject:candidate];
+    }
+}
+
+
+- (CGFloat)barWidthForProtocol
+{
+    NSString *measureString = [self.urlTextField.stringValue substringToIndex:[self.urlTextField.stringValue rangeOfString:@"://"].location + 3];
+    return [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width + 8.0f;
 }
 
 
@@ -113,12 +163,11 @@
     
     switch (self.progressPhase)
     {
-        case BarProgressPhasePending:
+        case KFProgressPhasePending:
             color4 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 0.243 alpha: 0.395];
             color5 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 0.774 alpha: 0];
             break;
-        case BarProgressPhaseDownloading:
-            
+        case KFProgressPhaseDownloading:
             color4 = [NSColor colorForControlTint:[NSColor currentControlTint]];
             color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.1f];
         default:
@@ -137,6 +186,7 @@
     
     //// Frames
     NSRect frame = self.bounds;
+    CGFloat barEnd = NSMaxX(self.urlTextField.frame);
     
     
     //// Background Drawing
@@ -162,7 +212,7 @@
     
     
     //// AddressBar Background Drawing
-    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, NSWidth(frame) - 97, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
+    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
     [fillColor setFill];
     [addressBarBackgroundPath fill];
     [color setStroke];
@@ -172,11 +222,24 @@
     
     //// AddressBar Progress Drawing
     
-    if (self.progress > .0f && self.progress < 1.0f)
+    CGFloat barWidth = 0;
+    switch (self.progressPhase)
+    {
+        case KFProgressPhaseNone:
+            barWidth = 0;
+            break;
+        case KFProgressPhasePending:
+            barWidth = [self barWidthForProtocol];
+            break;
+        default:
+            barWidth = MAX(barEnd * self.progress, 57);
+            break;
+    }
+    
+    if (barWidth > 0)
     {
         CGFloat addressBarProgressCornerRadius = 10;
-        CGFloat progressWidth = MAX((NSWidth(frame) - 97) * self.progress, 57);
-        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, progressWidth, NSHeight(frame) - 10);
+        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 10);
         NSRect addressBarProgressInnerRect = NSInsetRect(addressBarProgressRect, addressBarProgressCornerRadius, addressBarProgressCornerRadius);
         NSBezierPath* addressBarProgressPath = [NSBezierPath bezierPath];
         [addressBarProgressPath appendBezierPathWithArcWithCenter: NSMakePoint(NSMinX(addressBarProgressInnerRect), NSMinY(addressBarProgressInnerRect)) radius: addressBarProgressCornerRadius startAngle: 180 endAngle: 270];
@@ -188,7 +251,9 @@
     }
     
     //// AddressBar Drawing
-    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, NSWidth(frame) - 97, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
+    
+    
+    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
     [color6 setFill];
     [addressBarPath fill];
     
@@ -237,8 +302,24 @@
 {
     if (progressPhase != _progressPhase)
     {
-        _progressPhase = progressPhase;
-        [self setNeedsDisplay:YES];
+        if (_progressPhase == KFProgressPhaseDownloading && progressPhase == KFProgressPhaseNone)
+        {
+            _progress = 1.0f;
+            [self setNeedsDisplay:YES];
+            double delayInSeconds = .2f;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
+            {
+                _progress = 0;
+                _progressPhase = progressPhase;
+                [self setNeedsDisplay:YES];
+            });
+        }
+        else
+        {
+            _progressPhase = progressPhase;
+            [self setNeedsDisplay:YES];
+        }
     }
 }
 

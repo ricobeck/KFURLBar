@@ -11,23 +11,31 @@
 
 typedef NS_ENUM(NSUInteger, BarProgressPhase)
 {
-    BarProgressPhasePending,
-    BarProgressPhaseDownloading
+    KFProgressPhaseNone = 0,
+    KFProgressPhasePending,
+    KFProgressPhaseDownloading
 };
+
+@class KFURLBar;
 
 
 @protocol KFURLBarDelegate <NSObject>
 
 
+- (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url;
+
 
 @optional
+
 - (void)urlBarColorConfig;
+
+- (BOOL)urlBar:(KFURLBar *)urlBar isValidRequestStringValue:(NSString *)requestString;
 
 
 @end
 
 
-@interface KFURLBarView : NSView
+@interface KFURLBar : NSView
 
 
 @property (nonatomic, weak) id<KFURLBarDelegate> delegate;
