@@ -256,31 +256,34 @@
     NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
     [color6 setFill];
     [addressBarPath fill];
-    
-    ////// AddressBar Inner Shadow
-    NSRect addressBarBorderRect = NSInsetRect([addressBarPath bounds], -shadow.shadowBlurRadius, -shadow.shadowBlurRadius);
-    addressBarBorderRect = NSOffsetRect(addressBarBorderRect, -shadow.shadowOffset.width, -shadow.shadowOffset.height);
-    addressBarBorderRect = NSInsetRect(NSUnionRect(addressBarBorderRect, [addressBarPath bounds]), -1, -1);
-    
-    NSBezierPath* addressBarNegativePath = [NSBezierPath bezierPathWithRect: addressBarBorderRect];
-    [addressBarNegativePath appendBezierPath: addressBarPath];
-    [addressBarNegativePath setWindingRule: NSEvenOddWindingRule];
-    
-    [NSGraphicsContext saveGraphicsState];
+
+    if (!addressBarPath.isEmpty)
     {
-        NSShadow* shadowWithOffset = [shadow copy];
-        CGFloat xOffset = shadowWithOffset.shadowOffset.width + round(addressBarBorderRect.size.width);
-        CGFloat yOffset = shadowWithOffset.shadowOffset.height;
-        shadowWithOffset.shadowOffset = NSMakeSize(xOffset + copysign(0.1, xOffset), yOffset + copysign(0.1, yOffset));
-        [shadowWithOffset set];
-        [[NSColor grayColor] setFill];
-        [addressBarPath addClip];
-        NSAffineTransform* transform = [NSAffineTransform transform];
-        [transform translateXBy: -round(addressBarBorderRect.size.width) yBy: 0];
-        [[transform transformBezierPath: addressBarNegativePath] fill];
+        ////// AddressBar Inner Shadow
+        NSRect addressBarBorderRect = NSInsetRect([addressBarPath bounds], -shadow.shadowBlurRadius, -shadow.shadowBlurRadius);
+        addressBarBorderRect = NSOffsetRect(addressBarBorderRect, -shadow.shadowOffset.width, -shadow.shadowOffset.height);
+        addressBarBorderRect = NSInsetRect(NSUnionRect(addressBarBorderRect, [addressBarPath bounds]), -1, -1);
+
+        NSBezierPath* addressBarNegativePath = [NSBezierPath bezierPathWithRect: addressBarBorderRect];
+        [addressBarNegativePath appendBezierPath: addressBarPath];
+        [addressBarNegativePath setWindingRule: NSEvenOddWindingRule];
+
+        [NSGraphicsContext saveGraphicsState];
+        {
+            NSShadow* shadowWithOffset = [shadow copy];
+            CGFloat xOffset = shadowWithOffset.shadowOffset.width + round(addressBarBorderRect.size.width);
+            CGFloat yOffset = shadowWithOffset.shadowOffset.height;
+            shadowWithOffset.shadowOffset = NSMakeSize(xOffset + copysign(0.1, xOffset), yOffset + copysign(0.1, yOffset));
+            [shadowWithOffset set];
+            [[NSColor grayColor] setFill];
+            [addressBarPath addClip];
+            NSAffineTransform* transform = [NSAffineTransform transform];
+            [transform translateXBy: -round(addressBarBorderRect.size.width) yBy: 0];
+            [[transform transformBezierPath: addressBarNegativePath] fill];
+        }
+        [NSGraphicsContext restoreGraphicsState];
     }
-    [NSGraphicsContext restoreGraphicsState];
-    
+
     [color setStroke];
     [addressBarPath setLineWidth: 1];
     [addressBarPath stroke];

@@ -8,7 +8,7 @@
 #
 Pod::Spec.new do |s|
   s.name         = "KFURLBar"
-  s.version      = "0.0.1"
+  s.version      = "0.0.2"
   s.summary      = "KFURLBar is a NSView subview that mimics Safari's url bar with a progress background"
   # s.description  = <<-DESC
   #                   An optional longer description of KFURLBar
@@ -49,7 +49,7 @@ Pod::Spec.new do |s|
 
   # Specify the location from where the source should be retrieved.
   #
-  s.source       = { :git => "https://kfi.codebasehq.com/kfurlbar/kfurlbar.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://kfi.codebasehq.com/kfurlbar/kfurlbar.git", :tag => "0.0.2" }
   # s.source       = { :svn => 'http://EXAMPLE/KFURLBar/tags/1.0.0' }
   # s.source       = { :hg  => 'http://EXAMPLE/KFURLBar', :revision => '1.0.0' }
 
