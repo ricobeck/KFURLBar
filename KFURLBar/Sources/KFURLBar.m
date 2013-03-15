@@ -130,7 +130,13 @@
 
 - (CGFloat)barWidthForProtocol
 {
-    NSString *measureString = [self.urlTextField.stringValue substringToIndex:[self.urlTextField.stringValue rangeOfString:@"://"].location + 3];
+    NSInteger protocolIndex = [self.urlTextField.stringValue rangeOfString:@"://"].location;
+    if (protocolIndex == NSNotFound)
+    {
+        return 0;
+    }
+
+    NSString *measureString = [self.urlTextField.stringValue substringToIndex:protocolIndex + 3];
     return [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width + 8.0f;
 }
 
