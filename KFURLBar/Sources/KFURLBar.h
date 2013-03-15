@@ -42,6 +42,7 @@ typedef NS_ENUM(NSUInteger, BarProgressPhase)
 
 @property (nonatomic) double progress;
 @property (nonatomic) BarProgressPhase progressPhase;
+@property (nonatomic, weak) NSString *addressString;
 
 @property (nonatomic,strong) NSColor *gradientColorTop;
 @property (nonatomic,strong) NSColor *gradientColorBottom;

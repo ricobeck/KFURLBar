@@ -327,4 +327,16 @@
 }
 
 
+- (NSString *)addressString
+{
+    return self.urlTextField.stringValue;
+}
+
+
+- (void)setAddressString:(NSString *)addressString
+{
+    self.urlTextField.stringValue = addressString;
+}
+
+
 @end
