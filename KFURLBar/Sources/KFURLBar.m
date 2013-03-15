@@ -124,16 +124,7 @@
 
 - (BOOL)validateUrl:(NSString *)candidate
 {
-    if ([self.delegate respondsToSelector:@selector(urlBar:isValidRequestStringValue:)])
-    {
-        return [self.delegate urlBar:self isValidRequestStringValue:candidate];
-    }
-    else
-    {
-        NSString *urlRegEx = @"(http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
-        NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
-        return [urlTest evaluateWithObject:candidate];
-    }
+    return YES;
 }
 
 
