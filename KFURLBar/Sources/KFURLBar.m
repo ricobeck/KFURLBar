@@ -99,15 +99,8 @@
     NSView *loadButton = self.loadButton;
     NSDictionary *views = NSDictionaryOfVariableBindings(urlTextField, loadButton);
     
-    NSLayoutConstraint *textFieldCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-//    NSLayoutConstraint *textFieldLeadingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:20];
-//    NSLayoutConstraint *textFieldTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-85];
-    
-    [self addConstraints:@[textFieldCenterYConstraint]];
-    
-    NSLayoutConstraint *loadButtonCenterYConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0];
-//    NSLayoutConstraint *loadButtonTrailingConstraint = [NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:-20];
-    [self addConstraints:@[loadButtonCenterYConstraint]];
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[urlTextField]-(21)-[loadButton]-(8)-|" options:0 metrics:nil views:views]];
 }
 

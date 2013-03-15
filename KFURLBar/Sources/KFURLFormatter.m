@@ -34,13 +34,17 @@
 
 - (BOOL)isPartialStringValid:(NSString *__autoreleasing *)partialStringPtr proposedSelectedRange:(NSRangePointer)proposedSelRangePtr originalString:(NSString *)origString originalSelectedRange:(NSRange)origSelRange errorDescription:(NSString *__autoreleasing *)error
 {
-    if (origString.length > ((NSString *)*partialStringPtr).length)
+    NSString *partial = (NSString *)*partialStringPtr;
+    if (origString.length > partial.length)
     {
         return YES;
     }
-    NSRange newPartRange = NSMakeRange(origString.length, ((NSString *)*partialStringPtr).length - origString.length);
-    NSString *newString = [*partialStringPtr substringWithRange:newPartRange];    
-    return [newString rangeOfCharacterFromSet:self.urlCharacterSet].length == newPartRange.length;
+    NSRange newPartRange = NSMakeRange(origString.length, partial.length - origString.length);
+    NSString *newString = [partial substringWithRange:newPartRange];
+
+
+    NSCharacterSet *inverted = [self.urlCharacterSet invertedSet];
+    return [newString rangeOfCharacterFromSet:inverted].location == NSNotFound;
 }
 
 
