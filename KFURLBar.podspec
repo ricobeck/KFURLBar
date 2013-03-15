@@ -8,7 +8,7 @@
 #
 Pod::Spec.new do |s|
   s.name         = "KFURLBar"
-  s.version      = "0.0.2"
+  s.version      = "0.0.4"
   s.summary      = "KFURLBar is a NSView subview that mimics Safari's url bar with a progress background"
   # s.description  = <<-DESC
   #                   An optional longer description of KFURLBar
