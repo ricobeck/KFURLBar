@@ -18,6 +18,7 @@
 
 @interface KFURLBar ()
 
+@property (nonatomic) BOOL drawBackground;
 @property (nonatomic, strong) NSColor *currentBarColorTop;
 @property (nonatomic, strong) NSColor *currentBarColorBottom;
 @property (nonatomic, strong) NSTextField *urlTextField;
@@ -49,6 +50,12 @@
         [self initializeDefaults];
     }
     return self;
+}
+
+
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    self.drawBackground = ![newSuperview.className isEqualToString:@"NSToolbarFullScreenContentView"];
 }
 
 
@@ -179,18 +186,21 @@
     CGFloat barEnd = NSMaxX(self.urlTextField.frame);
     
     
-    //// Background Drawing
-    if (self.gradientColorTop && self.gradientColorBottom)
+    if (self.drawBackground)
     {
-        [[[NSGradient alloc] initWithStartingColor:self.gradientColorTop endingColor:self.gradientColorBottom] drawInRect:self.bounds angle:-90.0];
-    }
-    
-    [NSBezierPath setDefaultLineWidth:0.0f];
-    
-    if (self.borderColorTop)
-    {
-        [self.borderColorTop setStroke];
-        [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMaxY(self.bounds)) toPoint:NSMakePoint(NSMaxX(self.bounds), NSMaxY(self.bounds))];
+        //// Background Drawing
+        if (self.gradientColorTop && self.gradientColorBottom)
+        {
+            [[[NSGradient alloc] initWithStartingColor:self.gradientColorTop endingColor:self.gradientColorBottom] drawInRect:self.bounds angle:-90.0];
+        }
+        
+        [NSBezierPath setDefaultLineWidth:0.0f];
+        
+        if (self.borderColorTop)
+        {
+            [self.borderColorTop setStroke];
+            [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMaxY(self.bounds)) toPoint:NSMakePoint(NSMaxX(self.bounds), NSMaxY(self.bounds))];
+        }
     }
     
     if (self.borderColorBottom)
