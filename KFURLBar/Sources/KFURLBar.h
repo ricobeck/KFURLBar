@@ -44,6 +44,7 @@ typedef NS_ENUM(NSUInteger, BarProgressPhase)
 @property (nonatomic) BarProgressPhase progressPhase;
 @property (nonatomic, weak) NSString *addressString;
 
+@property (nonatomic) CGFloat cornerRadius;
 @property (nonatomic,strong) NSColor *gradientColorTop;
 @property (nonatomic,strong) NSColor *gradientColorBottom;
 @property (nonatomic,strong) NSColor *borderColorTop;
@@ -52,6 +53,9 @@ typedef NS_ENUM(NSUInteger, BarProgressPhase)
 @property (nonatomic,strong) NSColor *barColorPendingBottom;
 @property (nonatomic,strong) NSColor *barColorDownloadingTop;
 @property (nonatomic,strong) NSColor *barColorDownloadingBottom;
+
+@property (nonatomic, strong) NSArray *leftItems;
+@property (nonatomic, strong) NSArray *rightItems;
 
 
 - (instancetype)initWithDelegate:(id<KFURLBarDelegate>)delegate;

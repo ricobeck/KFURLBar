@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSColor *currentBarColorBottom;
 @property (nonatomic, strong) NSTextField *urlTextField;
 @property (nonatomic, strong) NSButton *loadButton;
+@property (nonatomic, strong) NSArray *fieldConstraints;
 
 
 @end
@@ -74,6 +75,7 @@
 - (void)initializeDefaults
 {
     _progress = .0f;
+    _cornerRadius = 2.5f;
     _progressPhase = KFProgressPhaseNone;
     self.gradientColorTop = kKFURLBarGradientColorTop;
     self.gradientColorBottom = kKFURLBarGradientColorBottom;
@@ -102,13 +104,31 @@
     self.loadButton.title = @"Load";
     [self addSubview:self.loadButton];
     
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    
+    [self updateFieldConstraints];
+}
+
+
+- (void)updateFieldConstraints
+{
     NSView *urlTextField = self.urlTextField;
     NSView *loadButton = self.loadButton;
     NSDictionary *views = NSDictionaryOfVariableBindings(urlTextField, loadButton);
     
-    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
-    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[urlTextField]-(21)-[loadButton]-(8)-|" options:0 metrics:nil views:views]];
+    if (self.fieldConstraints != nil)
+    {
+        [self removeConstraints:self.fieldConstraints];
+    }
+    
+    NSUInteger leftItemsCount = self.leftItems == nil ? 0 : [self.leftItems count];
+    NSUInteger rightItemsCount = self.rightItems == nil ? 0 : [self.rightItems count];
+    
+    NSString *visualFormat = [NSString stringWithFormat:@"|-(%lu)-[urlTextField]-(%lu)-[loadButton]-(8)-|", leftItemsCount * 10 + 20, rightItemsCount * 10 + 20];
+    
+    self.fieldConstraints = [NSLayoutConstraint constraintsWithVisualFormat:visualFormat options:0 metrics:nil views:views];
+    [self addConstraints:self.fieldConstraints];
 }
 
 
@@ -154,8 +174,6 @@
     NSColor* fillColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 1];
     NSColor* strokeColor = [NSColor colorWithCalibratedRed: 0 green: 0 blue: 0 alpha: 0.2];
     NSColor* color = [NSColor colorWithCalibratedRed: 0.6 green: 0.6 blue: 0.6 alpha: 1];
-    
-    CGFloat cornerRadius = 2.5f;
     
     NSColor *color4;
     NSColor *color5;
@@ -214,7 +232,7 @@
     
     
     //// AddressBar Background Drawing
-    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
+    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: self.cornerRadius yRadius: self.cornerRadius];
     [fillColor setFill];
     [addressBarBackgroundPath fill];
     [color setStroke];
@@ -240,7 +258,7 @@
     
     if (barWidth > 0)
     {
-        CGFloat addressBarProgressCornerRadius = cornerRadius;
+        CGFloat addressBarProgressCornerRadius = self.cornerRadius;
         NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 11);
         NSRect addressBarProgressInnerRect = NSInsetRect(addressBarProgressRect, addressBarProgressCornerRadius, addressBarProgressCornerRadius);
         NSBezierPath* addressBarProgressPath = [NSBezierPath bezierPath];
@@ -255,7 +273,7 @@
     //// AddressBar Drawing
     
     
-    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
+    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: self.cornerRadius yRadius: self.cornerRadius];
     [color6 setFill];
     [addressBarPath fill];
     
@@ -338,6 +356,20 @@
 - (void)setAddressString:(NSString *)addressString
 {
     self.urlTextField.stringValue = addressString;
+}
+
+
+- (void)setLeftItems:(NSArray *)leftItems
+{
+    _leftItems = leftItems;
+    [self updateFieldConstraints];
+}
+
+
+- (void)setRightItems:(NSArray *)rightItems
+{
+    _rightItems = rightItems;
+    [self updateFieldConstraints];
 }
 
 
