@@ -18,6 +18,7 @@
 
 @interface KFURLBar ()
 
+@property (nonatomic) BOOL drawBackground;
 @property (nonatomic, strong) NSColor *currentBarColorTop;
 @property (nonatomic, strong) NSColor *currentBarColorBottom;
 @property (nonatomic, strong) NSTextField *urlTextField;
@@ -52,6 +53,12 @@
 }
 
 
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    self.drawBackground = ![newSuperview.className isEqualToString:@"NSToolbarFullScreenContentView"];
+}
+
+
 - (instancetype)initWithDelegate:(id<KFURLBarDelegate>)delegate
 {
     self = [super init];
@@ -70,7 +77,7 @@
     _progressPhase = KFProgressPhaseNone;
     self.gradientColorTop = kKFURLBarGradientColorTop;
     self.gradientColorBottom = kKFURLBarGradientColorBottom;
-
+    
     self.borderColorTop = kKFURLBarBorderColorTop;
     self.borderColorBottom = kKFURLBarBorderColorBottom;
     
@@ -130,7 +137,13 @@
 
 - (CGFloat)barWidthForProtocol
 {
-    NSString *measureString = [self.urlTextField.stringValue substringToIndex:[self.urlTextField.stringValue rangeOfString:@"://"].location + 3];
+    NSInteger protocolIndex = [self.urlTextField.stringValue rangeOfString:@"://"].location;
+    if (protocolIndex == NSNotFound)
+    {
+        return 0;
+    }
+    
+    NSString *measureString = [self.urlTextField.stringValue substringToIndex:protocolIndex + 3];
     return [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width + 8.0f;
 }
 
@@ -139,8 +152,10 @@
 {
     //// Color Declarations
     NSColor* fillColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 1];
-    NSColor* strokeColor = [NSColor colorWithCalibratedRed: 0 green: 0 blue: 0 alpha: 0.393];
-    NSColor* color = [NSColor colorWithCalibratedRed: 0.667 green: 0.667 blue: 0.667 alpha: 1];
+    NSColor* strokeColor = [NSColor colorWithCalibratedRed: 0 green: 0 blue: 0 alpha: 0.2];
+    NSColor* color = [NSColor colorWithCalibratedRed: 0.6 green: 0.6 blue: 0.6 alpha: 1];
+    
+    CGFloat cornerRadius = 2.5f;
     
     NSColor *color4;
     NSColor *color5;
@@ -148,16 +163,16 @@
     switch (self.progressPhase)
     {
         case KFProgressPhasePending:
-            color4 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 0.243 alpha: 0.395];
-            color5 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 0.774 alpha: 0];
+            color4 = [NSColor lightGrayColor];
+            color5 = [NSColor grayColor];
             break;
         case KFProgressPhaseDownloading:
             color4 = [NSColor colorForControlTint:[NSColor currentControlTint]];
-            color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.1f];
+            color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.5f];
         default:
             break;
     }
-
+    
     NSColor* color6 = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 0];
     
     NSGradient* progressGradient = [[NSGradient alloc] initWithStartingColor: color5 endingColor: color4];
@@ -173,18 +188,21 @@
     CGFloat barEnd = NSMaxX(self.urlTextField.frame);
     
     
-    //// Background Drawing
-    if (self.gradientColorTop && self.gradientColorBottom)
+    if (self.drawBackground)
     {
-        [[[NSGradient alloc] initWithStartingColor:self.gradientColorTop endingColor:self.gradientColorBottom] drawInRect:self.bounds angle:-90.0];
-    }
-    
-    [NSBezierPath setDefaultLineWidth:0.0f];
-    
-    if (self.borderColorTop)
-    {
-        [self.borderColorTop setStroke];
-        [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMaxY(self.bounds)) toPoint:NSMakePoint(NSMaxX(self.bounds), NSMaxY(self.bounds))];
+        //// Background Drawing
+        if (self.gradientColorTop && self.gradientColorBottom)
+        {
+            [[[NSGradient alloc] initWithStartingColor:self.gradientColorTop endingColor:self.gradientColorBottom] drawInRect:self.bounds angle:-90.0];
+        }
+        
+        [NSBezierPath setDefaultLineWidth:0.0f];
+        
+        if (self.borderColorTop)
+        {
+            [self.borderColorTop setStroke];
+            [NSBezierPath strokeLineFromPoint:NSMakePoint(NSMinX(self.bounds), NSMaxY(self.bounds)) toPoint:NSMakePoint(NSMaxX(self.bounds), NSMaxY(self.bounds))];
+        }
     }
     
     if (self.borderColorBottom)
@@ -196,7 +214,7 @@
     
     
     //// AddressBar Background Drawing
-    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
+    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
     [fillColor setFill];
     [addressBarBackgroundPath fill];
     [color setStroke];
@@ -222,8 +240,8 @@
     
     if (barWidth > 0)
     {
-        CGFloat addressBarProgressCornerRadius = 10;
-        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 10);
+        CGFloat addressBarProgressCornerRadius = cornerRadius;
+        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 11);
         NSRect addressBarProgressInnerRect = NSInsetRect(addressBarProgressRect, addressBarProgressCornerRadius, addressBarProgressCornerRadius);
         NSBezierPath* addressBarProgressPath = [NSBezierPath bezierPath];
         [addressBarProgressPath appendBezierPathWithArcWithCenter: NSMakePoint(NSMinX(addressBarProgressInnerRect), NSMinY(addressBarProgressInnerRect)) radius: addressBarProgressCornerRadius startAngle: 180 endAngle: 270];
@@ -237,21 +255,21 @@
     //// AddressBar Drawing
     
     
-    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: 10 yRadius: 10];
+    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
     [color6 setFill];
     [addressBarPath fill];
-
+    
     if (!addressBarPath.isEmpty)
     {
         ////// AddressBar Inner Shadow
         NSRect addressBarBorderRect = NSInsetRect([addressBarPath bounds], -shadow.shadowBlurRadius, -shadow.shadowBlurRadius);
         addressBarBorderRect = NSOffsetRect(addressBarBorderRect, -shadow.shadowOffset.width, -shadow.shadowOffset.height);
-        addressBarBorderRect = NSInsetRect(NSUnionRect(addressBarBorderRect, [addressBarPath bounds]), -1, -1);
-
+        addressBarBorderRect = NSInsetRect(NSUnionRect(addressBarBorderRect, [addressBarPath bounds]), -1, -3);
+        
         NSBezierPath* addressBarNegativePath = [NSBezierPath bezierPathWithRect: addressBarBorderRect];
         [addressBarNegativePath appendBezierPath: addressBarPath];
         [addressBarNegativePath setWindingRule: NSEvenOddWindingRule];
-
+        
         [NSGraphicsContext saveGraphicsState];
         {
             NSShadow* shadowWithOffset = [shadow copy];
@@ -259,7 +277,7 @@
             CGFloat yOffset = shadowWithOffset.shadowOffset.height;
             shadowWithOffset.shadowOffset = NSMakeSize(xOffset + copysign(0.1, xOffset), yOffset + copysign(0.1, yOffset));
             [shadowWithOffset set];
-            [[NSColor grayColor] setFill];
+            [[NSColor lightGrayColor] setFill];
             [addressBarPath addClip];
             NSAffineTransform* transform = [NSAffineTransform transform];
             [transform translateXBy: -round(addressBarBorderRect.size.width) yBy: 0];
@@ -267,9 +285,9 @@
         }
         [NSGraphicsContext restoreGraphicsState];
     }
-
+    
     [color setStroke];
-    [addressBarPath setLineWidth: 1];
+    [addressBarPath setLineWidth: .5f];
     [addressBarPath stroke];
 }
 
@@ -296,11 +314,11 @@
             double delayInSeconds = .2f;
             dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
             dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
-            {
-                _progress = 0;
-                _progressPhase = progressPhase;
-                [self setNeedsDisplay:YES];
-            });
+                           {
+                               _progress = 0;
+                               _progressPhase = progressPhase;
+                               [self setNeedsDisplay:YES];
+                           });
         }
         else
         {
