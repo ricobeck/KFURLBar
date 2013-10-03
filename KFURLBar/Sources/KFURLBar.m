@@ -23,6 +23,7 @@
 @property (nonatomic, strong) NSColor *currentBarColorBottom;
 @property (nonatomic, strong) NSTextField *urlTextField;
 @property (nonatomic, strong) NSButton *loadButton;
+@property (nonatomic, strong) NSArray *fieldConstraints;
 
 
 @end
@@ -74,6 +75,7 @@
 - (void)initializeDefaults
 {
     _progress = .0f;
+    _cornerRadius = 2.5f;
     _progressPhase = KFProgressPhaseNone;
     self.gradientColorTop = kKFURLBarGradientColorTop;
     self.gradientColorBottom = kKFURLBarGradientColorBottom;
@@ -102,13 +104,86 @@
     self.loadButton.title = @"Load";
     [self addSubview:self.loadButton];
     
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:self.urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:self.loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    
+    [self updateFieldConstraints];
+}
+
+
+- (void)updateFieldConstraints
+{
     NSView *urlTextField = self.urlTextField;
     NSView *loadButton = self.loadButton;
     NSDictionary *views = NSDictionaryOfVariableBindings(urlTextField, loadButton);
     
-    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:urlTextField attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
-    [self addConstraints:@[[NSLayoutConstraint constraintWithItem:loadButton attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-[urlTextField]-(21)-[loadButton]-(8)-|" options:0 metrics:nil views:views]];
+    NSMutableDictionary *allViews = [views mutableCopy];
+    
+    NSUInteger leftItemsCount = self.leftItems == nil ? 0 : [self.leftItems count];
+    if (leftItemsCount > 0)
+    {
+        [allViews addEntriesFromDictionary:[self viewsFromArray:self.leftItems withBaseName:@"leftItem"]];
+    }
+    NSUInteger rightItemsCount = self.rightItems == nil ? 0 : [self.rightItems count];
+    if (rightItemsCount > 0)
+    {
+        [allViews addEntriesFromDictionary:[self viewsFromArray:self.rightItems withBaseName:@"rightItem"]];
+    }
+    views = [allViews copy];
+    
+    NSString *leftItemsVisualFormat = [self visualFormatFromArray:self.leftItems withBaseName:@"leftItem"];
+    NSString *rightItemsVisualFormat = [self visualFormatFromArray:self.rightItems withBaseName:@"rightItem"];
+    
+    
+    if (self.fieldConstraints != nil)
+    {
+        [self removeConstraints:self.fieldConstraints];
+    }
+
+    NSString *visualFormat = [NSString stringWithFormat:@"|-(12)%@[urlTextField]%@(20)-[loadButton]-(8)-|", leftItemsVisualFormat, rightItemsVisualFormat];
+    
+    self.fieldConstraints = [NSLayoutConstraint constraintsWithVisualFormat:visualFormat options:0 metrics:nil views:views];
+    [self addConstraints:self.fieldConstraints];
+    
+    [self setNeedsDisplay:YES];
+}
+
+
+- (NSDictionary *)viewsFromArray:(NSArray *)views withBaseName:(NSString *)baseName
+{
+    NSMutableDictionary *result = [NSMutableDictionary new];
+    NSUInteger count = 0;
+    for (NSView *view in views)
+    {
+        NSString *key = [NSString stringWithFormat:@"%@%lu", baseName, count];
+        result[key] = view;
+        count++;
+    }
+    return [result copy];
+}
+
+
+- (NSString *)visualFormatFromArray:(NSArray *)views withBaseName:(NSString *)baseName
+{
+    NSMutableArray *items = [NSMutableArray new];
+    NSUInteger count = 0;
+    for (NSView *view in views)
+    {
+        NSString *name = [NSString stringWithFormat:@"[%@%lu]", baseName, count];
+        [items addObject:name];
+        count++;
+    }
+    
+    NSString *result = [items componentsJoinedByString:@"-"];
+    if ([result length] > 0)
+    {
+        result = [NSString stringWithFormat:@"-%@-", result];
+    }
+    else
+    {
+        result = @"-";
+    }
+    return result;
 }
 
 
@@ -144,7 +219,9 @@
     }
     
     NSString *measureString = [self.urlTextField.stringValue substringToIndex:protocolIndex + 3];
-    return [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width + 8.0f;
+    CGFloat measuredSize = [measureString sizeWithAttributes:@{NSFontAttributeName:self.urlTextField.font}].width;
+    
+    return NSMinX([self.urlTextField frame]) + measuredSize;
 }
 
 
@@ -153,9 +230,7 @@
     //// Color Declarations
     NSColor* fillColor = [NSColor colorWithCalibratedRed: 1 green: 1 blue: 1 alpha: 1];
     NSColor* strokeColor = [NSColor colorWithCalibratedRed: 0 green: 0 blue: 0 alpha: 0.2];
-    NSColor* color = [NSColor colorWithCalibratedRed: 0.6 green: 0.6 blue: 0.6 alpha: 1];
-    
-    CGFloat cornerRadius = 2.5f;
+    NSColor* color = [NSColor colorWithCalibratedRed: 0.57 green: 0.57 blue: 0.57 alpha: 1];
     
     NSColor *color4;
     NSColor *color5;
@@ -163,12 +238,13 @@
     switch (self.progressPhase)
     {
         case KFProgressPhasePending:
-            color4 = [NSColor lightGrayColor];
-            color5 = [NSColor grayColor];
+            color4 = [NSColor colorWithCalibratedWhite:.8f alpha:.8f];
+            color5 = [NSColor colorWithCalibratedWhite:.8f alpha:.4f];
             break;
         case KFProgressPhaseDownloading:
             color4 = [NSColor colorForControlTint:[NSColor currentControlTint]];
-            color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.5f];
+            color5 = [[NSColor colorForControlTint:[NSColor currentControlTint]] colorWithAlphaComponent:.6f];
+            color = [NSColor colorWithCalibratedRed: 0.45 green: 0.45 blue: 0.45 alpha: 1];
         default:
             break;
     }
@@ -186,6 +262,11 @@
     //// Frames
     NSRect frame = self.bounds;
     CGFloat barEnd = NSMaxX(self.urlTextField.frame);
+    
+    if ([self.rightItems count] > 0)
+    {
+        barEnd = NSMaxX([[self.rightItems lastObject] frame]) - 4;
+    }
     
     
     if (self.drawBackground)
@@ -214,7 +295,7 @@
     
     
     //// AddressBar Background Drawing
-    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
+    NSBezierPath* addressBarBackgroundPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: self.cornerRadius yRadius: self.cornerRadius];
     [fillColor setFill];
     [addressBarBackgroundPath fill];
     [color setStroke];
@@ -234,14 +315,14 @@
             barWidth = [self barWidthForProtocol];
             break;
         default:
-            barWidth = MAX(barEnd * self.progress, 57);
+            barWidth = MAX(barEnd * self.progress, [self barWidthForProtocol]);
             break;
     }
     
     if (barWidth > 0)
     {
-        CGFloat addressBarProgressCornerRadius = cornerRadius;
-        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 11);
+        CGFloat addressBarProgressCornerRadius = self.cornerRadius;
+        NSRect addressBarProgressRect = NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barWidth, NSHeight(frame) - 10);
         NSRect addressBarProgressInnerRect = NSInsetRect(addressBarProgressRect, addressBarProgressCornerRadius, addressBarProgressCornerRadius);
         NSBezierPath* addressBarProgressPath = [NSBezierPath bezierPath];
         [addressBarProgressPath appendBezierPathWithArcWithCenter: NSMakePoint(NSMinX(addressBarProgressInnerRect), NSMinY(addressBarProgressInnerRect)) radius: addressBarProgressCornerRadius startAngle: 180 endAngle: 270];
@@ -255,7 +336,7 @@
     //// AddressBar Drawing
     
     
-    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 11) xRadius: cornerRadius yRadius: cornerRadius];
+    NSBezierPath* addressBarPath = [NSBezierPath bezierPathWithRoundedRect: NSMakeRect(NSMinX(frame) + 8.5, NSMinY(frame) + 5.5, barEnd, NSHeight(frame) - 10) xRadius: self.cornerRadius yRadius: self.cornerRadius];
     [color6 setFill];
     [addressBarPath fill];
     
@@ -338,6 +419,54 @@
 - (void)setAddressString:(NSString *)addressString
 {
     self.urlTextField.stringValue = addressString;
+}
+
+
+- (void)setLeftItems:(NSArray *)leftItems
+{
+    if (_leftItems != nil)
+    {
+        for (NSView *view in _leftItems)
+        {
+            if ([[view superview] isEqualTo:self])
+            {
+                [view removeFromSuperview];
+            }
+        }
+    }
+    _leftItems = leftItems;
+    
+    for (NSView *view in _leftItems)
+    {
+        [self addSubview:view];
+         [self addConstraints:@[[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    }
+    
+    [self updateFieldConstraints];
+}
+
+
+- (void)setRightItems:(NSArray *)rightItems
+{
+    if (_rightItems != nil)
+    {
+        for (NSView *view in _rightItems)
+        {
+            if ([[view superview] isEqualTo:self])
+            {
+                [view removeFromSuperview];
+            }
+        }
+    }
+    _rightItems = rightItems;
+    
+    for (NSView *view in _rightItems)
+    {
+        [self addSubview:view];
+        [self addConstraints:@[[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]]];
+    }
+    
+    [self updateFieldConstraints];
 }
 
 

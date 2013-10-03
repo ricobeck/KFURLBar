@@ -27,18 +27,37 @@
 {
     // Insert code here to initialize your application
     self.urlBar.delegate = self;
+    
+    NSButton *reloadButton = [[NSButton alloc] init];
+    [reloadButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [reloadButton setBezelStyle:NSInlineBezelStyle];
+    [reloadButton setImage:[NSImage imageNamed:@"NSRefreshTemplate"]];
+    [reloadButton setTarget:self];
+    [reloadButton setAction:@selector(simulateLoad)];
+    self.urlBar.leftItems = @[reloadButton];
+    
+    NSButton *editButton = [[NSButton alloc] init];
+    [editButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [editButton setBezelStyle:NSInlineBezelStyle];
+    [editButton setTitle:@"Options"];
+    [[editButton cell] setBackgroundStyle:NSBackgroundStyleRaised];
+    self.urlBar.rightItems = @[editButton];
 }
 
+
+- (void)simulateLoad
+{
+    self.progress = .0f;
+    self.urlBar.progressPhase = KFProgressPhasePending;
+    [self performSelector:@selector(updateProgress) withObject:nil afterDelay:.1f];
+}
 
 #pragma mark - KFURLBarDelegate Methods
 
 
 - (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url
 {
-    self.progress = .0f;
-    urlBar.progressPhase = KFProgressPhasePending;
-    
-    [self performSelector:@selector(updateProgress) withObject:nil afterDelay:1.0f];
+    [self simulateLoad];
 }
 
 
@@ -53,11 +72,11 @@
 - (void)updateProgress
 {
     self.urlBar.progressPhase = KFProgressPhaseDownloading;
-    self.progress += .05;
+    self.progress += .005;
     self.urlBar.progress = self.progress;
     if (self.progress < 1.0)
     {
-        [self performSelector:@selector(updateProgress) withObject:nil afterDelay:.2f];
+        [self performSelector:@selector(updateProgress) withObject:nil afterDelay:.02f];
     }
     else
     {
