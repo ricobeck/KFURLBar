@@ -6,8 +6,6 @@ KFURLBar is a NSView subview that mimics Safari's url bar with a progress backgr
 
 ![Alt Example Screenshots](/Images/screenshot.png "KFURLBar in Action with a positioned Alert Sheet")
 
-A client connecting to the OpenWeatherMap API for fetching current weather data, interval/daily forecasts, and searching cities.
-
 #Installation
 Add
 ```
