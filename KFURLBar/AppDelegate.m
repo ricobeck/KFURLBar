@@ -8,64 +8,71 @@
 
 #import "AppDelegate.h"
 #import "KFURLBar.h"
+#import "KFWebKitProgressController.h"
 
-@interface AppDelegate () <KFURLBarDelegate>
+#import <WebKit/WebKit.h>
+
+@interface AppDelegate () <KFURLBarDelegate, NSWindowDelegate, KFWebKitProgressDelegate>
+
 
 @property (weak) IBOutlet KFURLBar *urlBar;
+
+@property (weak) IBOutlet WebView *webView;
+
+
 @property (nonatomic) float progress;
+
 
 @end
 
 
 @implementation AppDelegate
 
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize managedObjectModel = _managedObjectModel;
-@synthesize managedObjectContext = _managedObjectContext;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-    // Insert code here to initialize your application
+    self.window.delegate = self;
+    
     self.urlBar.delegate = self;
+    self.urlBar.addressString = @"https://pods.kf-interactive.com";
     
     NSButton *reloadButton = [[NSButton alloc] init];
     [reloadButton setTranslatesAutoresizingMaskIntoConstraints:NO];
     [reloadButton setBezelStyle:NSInlineBezelStyle];
     [reloadButton setImage:[NSImage imageNamed:@"NSRefreshTemplate"]];
     [reloadButton setTarget:self];
-    [reloadButton setAction:@selector(simulateLoad)];
+    [reloadButton setAction:@selector(reloadURL:)];
     self.urlBar.leftItems = @[reloadButton];
     
-    NSButton *editButton = [[NSButton alloc] init];
-    [editButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-    [editButton setBezelStyle:NSInlineBezelStyle];
-    [editButton setTitle:@"Options"];
-    [[editButton cell] setBackgroundStyle:NSBackgroundStyleRaised];
-    self.urlBar.rightItems = @[editButton];
+    NSButton *alertButton = [[NSButton alloc] init];
+    [alertButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [alertButton setBezelStyle:NSInlineBezelStyle];
+    [alertButton setTitle:@"Alert"];
+    [alertButton setTarget:self];
+    [alertButton setAction:@selector(showAlert:)];
+    [[alertButton cell] setBackgroundStyle:NSBackgroundStyleRaised];
+    self.urlBar.rightItems = @[alertButton];
 }
 
 
-- (void)simulateLoad
+- (void)reloadURL:(id)sender
 {
-    self.progress = .0f;
-    self.urlBar.progressPhase = KFProgressPhasePending;
-    [self performSelector:@selector(updateProgress) withObject:nil afterDelay:.1f];
-}
-
-#pragma mark - KFURLBarDelegate Methods
-
-
-- (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url
-{
-    [self simulateLoad];
+    [[self.webView mainFrame] reload];
 }
 
 
-- (BOOL)urlBar:(KFURLBar *)urlBar isValidRequestStringValue:(NSString *)requestString
+- (void)showAlert:(id)sender
 {
-    NSString *urlRegEx = @"(ftp|http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
-    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
-    return [urlTest evaluateWithObject:requestString];
+    NSBeginAlertSheet (@"WebKit Objective-C Programming Guide",
+                       @"OK",
+                       nil,
+                       @"Cancel",
+                       [self window],
+                       self,
+                       nil,
+                       nil,
+                       nil,
+                       @"As the user navigates from page to page in your embedded browser, you may want to display the current URL, load status, and error messages. For example, in a web browser application, you might want to display the current URL in a text field that the user can edit.", nil);
 }
 
 
@@ -85,169 +92,57 @@
 }
 
 
+#pragma mark - KFURLBarDelegate Methods
 
 
-#pragma mark - CoreData Stack
-
-// Returns the directory the application uses to store the Core Data store file. This code uses a directory named "com.kfinteractive.osx.KFURLBar" in the user's Application Support directory.
-- (NSURL *)applicationFilesDirectory
+- (void)urlBar:(KFURLBar *)urlBar didRequestURL:(NSURL *)url
 {
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *appSupportURL = [[fileManager URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] lastObject];
-    return [appSupportURL URLByAppendingPathComponent:@"com.kfinteractive.osx.KFURLBar"];
+    [[self.webView mainFrame] loadRequest:[[NSURLRequest alloc] initWithURL:url]];
+    self.urlBar.progressPhase = KFProgressPhasePending;
 }
 
-// Creates if necessary and returns the managed object model for the application.
-- (NSManagedObjectModel *)managedObjectModel
+
+- (BOOL)urlBar:(KFURLBar *)urlBar isValidRequestStringValue:(NSString *)requestString
 {
-    if (_managedObjectModel) {
-        return _managedObjectModel;
-    }
-	
-    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"KFURLBar" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
-    return _managedObjectModel;
+    NSString *urlRegEx = @"(ftp|http|https)://((\\w)*|([0-9]*)|([-|_])*)+([\\.|/]((\\w)*|([0-9]*)|([-|_])*))+";
+    NSPredicate *urlTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", urlRegEx];
+    return [urlTest evaluateWithObject:requestString];
 }
 
-// Returns the persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. (The directory for the store is created, if necessary.)
-- (NSPersistentStoreCoordinator *)persistentStoreCoordinator
+
+#pragma mark - NSWindowDelegate Methods
+
+
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
 {
-    if (_persistentStoreCoordinator) {
-        return _persistentStoreCoordinator;
-    }
-    
-    NSManagedObjectModel *mom = [self managedObjectModel];
-    if (!mom) {
-        NSLog(@"%@:%@ No model to generate a store from", [self class], NSStringFromSelector(_cmd));
-        return nil;
-    }
-    
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSURL *applicationFilesDirectory = [self applicationFilesDirectory];
-    NSError *error = nil;
-    
-    NSDictionary *properties = [applicationFilesDirectory resourceValuesForKeys:@[NSURLIsDirectoryKey] error:&error];
-    
-    if (!properties) {
-        BOOL ok = NO;
-        if ([error code] == NSFileReadNoSuchFileError) {
-            ok = [fileManager createDirectoryAtPath:[applicationFilesDirectory path] withIntermediateDirectories:YES attributes:nil error:&error];
-        }
-        if (!ok) {
-            [[NSApplication sharedApplication] presentError:error];
-            return nil;
-        }
-    } else {
-        if (![properties[NSURLIsDirectoryKey] boolValue]) {
-            // Customize and localize this error.
-            NSString *failureDescription = [NSString stringWithFormat:@"Expected a folder to store application data, found a file (%@).", [applicationFilesDirectory path]];
-            
-            NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-            [dict setValue:failureDescription forKey:NSLocalizedDescriptionKey];
-            error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:101 userInfo:dict];
-            
-            [[NSApplication sharedApplication] presentError:error];
-            return nil;
-        }
-    }
-    
-    NSURL *url = [applicationFilesDirectory URLByAppendingPathComponent:@"KFURLBar.storedata"];
-    NSPersistentStoreCoordinator *coordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
-    if (![coordinator addPersistentStoreWithType:NSXMLStoreType configuration:nil URL:url options:nil error:&error]) {
-        [[NSApplication sharedApplication] presentError:error];
-        return nil;
-    }
-    _persistentStoreCoordinator = coordinator;
-    
-    return _persistentStoreCoordinator;
+    rect.origin.y -= NSHeight(self.urlBar.frame);
+    return rect;
 }
 
-// Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) 
-- (NSManagedObjectContext *)managedObjectContext
+
+#pragma mark WebKitProgressDelegate Methods
+
+
+- (void)webKitProgressDidChangeFinishedCount:(NSInteger)finishedCount ofTotalCount:(NSInteger)totalCount
 {
-    if (_managedObjectContext) {
-        return _managedObjectContext;
-    }
+    self.urlBar.progressPhase = KFProgressPhaseDownloading;
+    self.urlBar.progress = (float)finishedCount / (float)totalCount;
     
-    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
-    if (!coordinator) {
-        NSMutableDictionary *dict = [NSMutableDictionary dictionary];
-        [dict setValue:@"Failed to initialize the store" forKey:NSLocalizedDescriptionKey];
-        [dict setValue:@"There was an error building up the data file." forKey:NSLocalizedFailureReasonErrorKey];
-        NSError *error = [NSError errorWithDomain:@"YOUR_ERROR_DOMAIN" code:9999 userInfo:dict];
-        [[NSApplication sharedApplication] presentError:error];
-        return nil;
-    }
-    _managedObjectContext = [[NSManagedObjectContext alloc] init];
-    [_managedObjectContext setPersistentStoreCoordinator:coordinator];
-
-    return _managedObjectContext;
-}
-
-// Returns the NSUndoManager for the application. In this case, the manager returned is that of the managed object context for the application.
-- (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)window
-{
-    return [[self managedObjectContext] undoManager];
-}
-
-// Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
-- (IBAction)saveAction:(id)sender
-{
-    NSError *error = nil;
-    
-    if (![[self managedObjectContext] commitEditing]) {
-        NSLog(@"%@:%@ unable to commit editing before saving", [self class], NSStringFromSelector(_cmd));
-    }
-    
-    if (![[self managedObjectContext] save:&error]) {
-        [[NSApplication sharedApplication] presentError:error];
-    }
-}
-
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
-{
-    // Save changes in the application's managed object context before the application terminates.
-    
-    if (!_managedObjectContext) {
-        return NSTerminateNow;
-    }
-    
-    if (![[self managedObjectContext] commitEditing]) {
-        NSLog(@"%@:%@ unable to commit editing to terminate", [self class], NSStringFromSelector(_cmd));
-        return NSTerminateCancel;
-    }
-    
-    if (![[self managedObjectContext] hasChanges]) {
-        return NSTerminateNow;
-    }
-    
-    NSError *error = nil;
-    if (![[self managedObjectContext] save:&error]) {
-
-        // Customize this code block to include application-specific recovery steps.              
-        BOOL result = [sender presentError:error];
-        if (result) {
-            return NSTerminateCancel;
-        }
-
-        NSString *question = NSLocalizedString(@"Could not save changes while quitting. Quit anyway?", @"Quit without saves error question message");
-        NSString *info = NSLocalizedString(@"Quitting now will lose any changes you have made since the last successful save", @"Quit without saves error question info");
-        NSString *quitButton = NSLocalizedString(@"Quit anyway", @"Quit anyway button title");
-        NSString *cancelButton = NSLocalizedString(@"Cancel", @"Cancel button title");
-        NSAlert *alert = [[NSAlert alloc] init];
-        [alert setMessageText:question];
-        [alert setInformativeText:info];
-        [alert addButtonWithTitle:quitButton];
-        [alert addButtonWithTitle:cancelButton];
-
-        NSInteger answer = [alert runModal];
+    if (totalCount == finishedCount)
+    {
+        double delayInSeconds = 1.0;
         
-        if (answer == NSAlertAlternateReturn) {
-            return NSTerminateCancel;
-        }
+         __weak typeof(self) weakSelf = self;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void)
+        {
+            weakSelf.urlBar.progressPhase = KFProgressPhaseNone;
+        });
     }
-
-    return NSTerminateNow;
 }
+
+
+
+
 
 @end

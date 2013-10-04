@@ -16,13 +16,14 @@
 		1D1706C516EA342F008920CC /* KFURLBar.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706C316EA342F008920CC /* KFURLBar.xcdatamodeld */; };
 		1D1706CE16EA3680008920CC /* KFURLBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706CD16EA3680008920CC /* KFURLBar.m */; };
 		1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706D316EAA49F008920CC /* KFURLFormatter.m */; };
+		1D200A5F17FD7FB5005B6D60 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D200A5E17FD7FB5005B6D60 /* WebKit.framework */; };
+		1D42C73117FEE309009E0EAD /* KFWebKitProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1D1706A816EA342F008920CC /* KFURLBar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KFURLBar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D1706AB16EA342F008920CC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1D1706AE16EA342F008920CC /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
-		1D1706AF16EA342F008920CC /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		1D1706B016EA342F008920CC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D1706B316EA342F008920CC /* KFURLBar-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KFURLBar-Info.plist"; sourceTree = "<group>"; };
 		1D1706B516EA342F008920CC /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -37,6 +38,9 @@
 		1D1706CD16EA3680008920CC /* KFURLBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFURLBar.m; sourceTree = "<group>"; };
 		1D1706D216EAA49F008920CC /* KFURLFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFURLFormatter.h; sourceTree = "<group>"; };
 		1D1706D316EAA49F008920CC /* KFURLFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFURLFormatter.m; sourceTree = "<group>"; };
+		1D200A5E17FD7FB5005B6D60 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
+		1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFWebKitProgressController.h; sourceTree = "<group>"; };
+		1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFWebKitProgressController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +48,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1D200A5F17FD7FB5005B6D60 /* WebKit.framework in Frameworks */,
 				1D1706AC16EA342F008920CC /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +76,7 @@
 		1D1706AA16EA342F008920CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1D200A5E17FD7FB5005B6D60 /* WebKit.framework */,
 				1D1706AB16EA342F008920CC /* Cocoa.framework */,
 				1D1706AD16EA342F008920CC /* Other Frameworks */,
 			);
@@ -81,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				1D1706AE16EA342F008920CC /* AppKit.framework */,
-				1D1706AF16EA342F008920CC /* CoreData.framework */,
 				1D1706B016EA342F008920CC /* Foundation.framework */,
 			);
 			name = "Other Frameworks";
@@ -93,6 +98,8 @@
 				1D1706BD16EA342F008920CC /* AppDelegate.h */,
 				1D1706BE16EA342F008920CC /* AppDelegate.m */,
 				1D1706C016EA342F008920CC /* MainMenu.xib */,
+				1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */,
+				1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */,
 				1D1706CB16EA3680008920CC /* Sources */,
 				1D1706B216EA342F008920CC /* Supporting Files */,
 			);
@@ -189,6 +196,7 @@
 			files = (
 				1D1706B816EA342F008920CC /* main.m in Sources */,
 				1D1706BF16EA342F008920CC /* AppDelegate.m in Sources */,
+				1D42C73117FEE309009E0EAD /* KFWebKitProgressController.m in Sources */,
 				1D1706C516EA342F008920CC /* KFURLBar.xcdatamodeld in Sources */,
 				1D1706CE16EA3680008920CC /* KFURLBar.m in Sources */,
 				1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */,
@@ -327,6 +335,7 @@
 				1D1706CA16EA342F008920CC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
