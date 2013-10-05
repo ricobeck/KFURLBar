@@ -13,7 +13,6 @@
 		1D1706BC16EA342F008920CC /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1D1706BA16EA342F008920CC /* Credits.rtf */; };
 		1D1706BF16EA342F008920CC /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706BE16EA342F008920CC /* AppDelegate.m */; };
 		1D1706C216EA342F008920CC /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1D1706C016EA342F008920CC /* MainMenu.xib */; };
-		1D1706C516EA342F008920CC /* KFURLBar.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706C316EA342F008920CC /* KFURLBar.xcdatamodeld */; };
 		1D1706CE16EA3680008920CC /* KFURLBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706CD16EA3680008920CC /* KFURLBar.m */; };
 		1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706D316EAA49F008920CC /* KFURLFormatter.m */; };
 		1D200A5F17FD7FB5005B6D60 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D200A5E17FD7FB5005B6D60 /* WebKit.framework */; };
@@ -33,7 +32,6 @@
 		1D1706BD16EA342F008920CC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D1706BE16EA342F008920CC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D1706C116EA342F008920CC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		1D1706C416EA342F008920CC /* KFURLBar.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = KFURLBar.xcdatamodel; sourceTree = "<group>"; };
 		1D1706CC16EA3680008920CC /* KFURLBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFURLBar.h; sourceTree = "<group>"; };
 		1D1706CD16EA3680008920CC /* KFURLBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFURLBar.m; sourceTree = "<group>"; };
 		1D1706D216EAA49F008920CC /* KFURLFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFURLFormatter.h; sourceTree = "<group>"; };
@@ -109,7 +107,6 @@
 		1D1706B216EA342F008920CC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				1D1706C316EA342F008920CC /* KFURLBar.xcdatamodeld */,
 				1D1706B316EA342F008920CC /* KFURLBar-Info.plist */,
 				1D1706B416EA342F008920CC /* InfoPlist.strings */,
 				1D1706B716EA342F008920CC /* main.m */,
@@ -197,7 +194,6 @@
 				1D1706B816EA342F008920CC /* main.m in Sources */,
 				1D1706BF16EA342F008920CC /* AppDelegate.m in Sources */,
 				1D42C73117FEE309009E0EAD /* KFWebKitProgressController.m in Sources */,
-				1D1706C516EA342F008920CC /* KFURLBar.xcdatamodeld in Sources */,
 				1D1706CE16EA3680008920CC /* KFURLBar.m in Sources */,
 				1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */,
 			);
@@ -342,19 +338,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		1D1706C316EA342F008920CC /* KFURLBar.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				1D1706C416EA342F008920CC /* KFURLBar.xcdatamodel */,
-			);
-			currentVersion = 1D1706C416EA342F008920CC /* KFURLBar.xcdatamodel */;
-			path = KFURLBar.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 1D1706A016EA342F008920CC /* Project object */;
 }
