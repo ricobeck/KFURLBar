@@ -17,6 +17,13 @@
 		1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706D316EAA49F008920CC /* KFURLFormatter.m */; };
 		1D200A5F17FD7FB5005B6D60 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D200A5E17FD7FB5005B6D60 /* WebKit.framework */; };
 		1D42C73117FEE309009E0EAD /* KFWebKitProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */; };
+		7B6996311819533F00CAD9E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D1706AB16EA342F008920CC /* Cocoa.framework */; };
+		7B6996521819536900CAD9E2 /* KFURLBar.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D1706CC16EA3680008920CC /* KFURLBar.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B6996531819537300CAD9E2 /* KFWebKitProgressController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */; };
+		7B6996541819537300CAD9E2 /* KFURLBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706CD16EA3680008920CC /* KFURLBar.m */; };
+		7B6996551819537300CAD9E2 /* KFURLFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D1706D316EAA49F008920CC /* KFURLFormatter.m */; };
+		7B6996561819538000CAD9E2 /* KFURLFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D1706D216EAA49F008920CC /* KFURLFormatter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7B6996571819538300CAD9E2 /* KFWebKitProgressController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,13 +39,15 @@
 		1D1706BD16EA342F008920CC /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		1D1706BE16EA342F008920CC /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		1D1706C116EA342F008920CC /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		1D1706CC16EA3680008920CC /* KFURLBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFURLBar.h; sourceTree = "<group>"; };
-		1D1706CD16EA3680008920CC /* KFURLBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFURLBar.m; sourceTree = "<group>"; };
-		1D1706D216EAA49F008920CC /* KFURLFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFURLFormatter.h; sourceTree = "<group>"; };
-		1D1706D316EAA49F008920CC /* KFURLFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFURLFormatter.m; sourceTree = "<group>"; };
+		1D1706CC16EA3680008920CC /* KFURLBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KFURLBar.h; path = KFURLBar/Sources/KFURLBar.h; sourceTree = "<group>"; };
+		1D1706CD16EA3680008920CC /* KFURLBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KFURLBar.m; path = KFURLBar/Sources/KFURLBar.m; sourceTree = "<group>"; };
+		1D1706D216EAA49F008920CC /* KFURLFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KFURLFormatter.h; path = KFURLBar/Sources/KFURLFormatter.h; sourceTree = "<group>"; };
+		1D1706D316EAA49F008920CC /* KFURLFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KFURLFormatter.m; path = KFURLBar/Sources/KFURLFormatter.m; sourceTree = "<group>"; };
 		1D200A5E17FD7FB5005B6D60 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
-		1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KFWebKitProgressController.h; sourceTree = "<group>"; };
-		1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KFWebKitProgressController.m; sourceTree = "<group>"; };
+		1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KFWebKitProgressController.h; path = KFURLBar/KFWebKitProgressController.h; sourceTree = "<group>"; };
+		1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KFWebKitProgressController.m; path = KFURLBar/KFWebKitProgressController.m; sourceTree = "<group>"; };
+		7B6996301819533F00CAD9E2 /* libKFURLBar.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKFURLBar.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B6996351819533F00CAD9E2 /* KFURLBar-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KFURLBar-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,14 +60,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7B69962D1819533F00CAD9E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B6996311819533F00CAD9E2 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1D17069F16EA342F008920CC = {
 			isa = PBXGroup;
 			children = (
-				1D1706B116EA342F008920CC /* KFURLBar */,
-				1D1706AA16EA342F008920CC /* Frameworks */,
+				1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */,
+				1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */,
+				1D1706CC16EA3680008920CC /* KFURLBar.h */,
+				1D1706CD16EA3680008920CC /* KFURLBar.m */,
+				1D1706D216EAA49F008920CC /* KFURLFormatter.h */,
+				1D1706D316EAA49F008920CC /* KFURLFormatter.m */,
+				7B6996341819533F00CAD9E2 /* Supporting Files */,
+				1D1706B116EA342F008920CC /* KFURLBarDemo */,
 				1D1706A916EA342F008920CC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				1D1706A816EA342F008920CC /* KFURLBar.app */,
+				7B6996301819533F00CAD9E2 /* libKFURLBar.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -74,33 +98,25 @@
 		1D1706AA16EA342F008920CC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1D200A5E17FD7FB5005B6D60 /* WebKit.framework */,
-				1D1706AB16EA342F008920CC /* Cocoa.framework */,
-				1D1706AD16EA342F008920CC /* Other Frameworks */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		1D1706AD16EA342F008920CC /* Other Frameworks */ = {
-			isa = PBXGroup;
-			children = (
 				1D1706AE16EA342F008920CC /* AppKit.framework */,
 				1D1706B016EA342F008920CC /* Foundation.framework */,
+				1D200A5E17FD7FB5005B6D60 /* WebKit.framework */,
+				1D1706AB16EA342F008920CC /* Cocoa.framework */,
 			);
-			name = "Other Frameworks";
+			name = Frameworks;
+			path = ..;
 			sourceTree = "<group>";
 		};
-		1D1706B116EA342F008920CC /* KFURLBar */ = {
+		1D1706B116EA342F008920CC /* KFURLBarDemo */ = {
 			isa = PBXGroup;
 			children = (
 				1D1706BD16EA342F008920CC /* AppDelegate.h */,
 				1D1706BE16EA342F008920CC /* AppDelegate.m */,
 				1D1706C016EA342F008920CC /* MainMenu.xib */,
-				1D42C72F17FEE309009E0EAD /* KFWebKitProgressController.h */,
-				1D42C73017FEE309009E0EAD /* KFWebKitProgressController.m */,
 				1D1706CB16EA3680008920CC /* Sources */,
 				1D1706B216EA342F008920CC /* Supporting Files */,
 			);
+			name = KFURLBarDemo;
 			path = KFURLBar;
 			sourceTree = "<group>";
 		};
@@ -119,20 +135,39 @@
 		1D1706CB16EA3680008920CC /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				1D1706CC16EA3680008920CC /* KFURLBar.h */,
-				1D1706CD16EA3680008920CC /* KFURLBar.m */,
-				1D1706D216EAA49F008920CC /* KFURLFormatter.h */,
-				1D1706D316EAA49F008920CC /* KFURLFormatter.m */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		7B6996341819533F00CAD9E2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				1D1706AA16EA342F008920CC /* Frameworks */,
+				7B6996351819533F00CAD9E2 /* KFURLBar-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			path = KFURLBar;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		7B69962E1819533F00CAD9E2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B6996521819536900CAD9E2 /* KFURLBar.h in Headers */,
+				7B6996561819538000CAD9E2 /* KFURLFormatter.h in Headers */,
+				7B6996571819538300CAD9E2 /* KFWebKitProgressController.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		1D1706A716EA342F008920CC /* KFURLBar */ = {
+		1D1706A716EA342F008920CC /* KFURLBarDemo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D1706C816EA342F008920CC /* Build configuration list for PBXNativeTarget "KFURLBar" */;
+			buildConfigurationList = 1D1706C816EA342F008920CC /* Build configuration list for PBXNativeTarget "KFURLBarDemo" */;
 			buildPhases = (
 				1D1706A416EA342F008920CC /* Sources */,
 				1D1706A516EA342F008920CC /* Frameworks */,
@@ -142,10 +177,27 @@
 			);
 			dependencies = (
 			);
-			name = KFURLBar;
+			name = KFURLBarDemo;
 			productName = KFURLBar;
 			productReference = 1D1706A816EA342F008920CC /* KFURLBar.app */;
 			productType = "com.apple.product-type.application";
+		};
+		7B69962F1819533F00CAD9E2 /* KFURLBar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7B69964C1819534000CAD9E2 /* Build configuration list for PBXNativeTarget "KFURLBar" */;
+			buildPhases = (
+				7B69962C1819533F00CAD9E2 /* Sources */,
+				7B69962D1819533F00CAD9E2 /* Frameworks */,
+				7B69962E1819533F00CAD9E2 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KFURLBar;
+			productName = KFURLBar;
+			productReference = 7B6996301819533F00CAD9E2 /* libKFURLBar.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -168,7 +220,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1D1706A716EA342F008920CC /* KFURLBar */,
+				1D1706A716EA342F008920CC /* KFURLBarDemo */,
+				7B69962F1819533F00CAD9E2 /* KFURLBar */,
 			);
 		};
 /* End PBXProject section */
@@ -196,6 +249,16 @@
 				1D42C73117FEE309009E0EAD /* KFWebKitProgressController.m in Sources */,
 				1D1706CE16EA3680008920CC /* KFURLBar.m in Sources */,
 				1D1706D416EAA49F008920CC /* KFURLFormatter.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7B69962C1819533F00CAD9E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7B6996531819537300CAD9E2 /* KFWebKitProgressController.m in Sources */,
+				7B6996541819537300CAD9E2 /* KFURLBar.m in Sources */,
+				7B6996551819537300CAD9E2 /* KFURLFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -316,6 +379,45 @@
 			};
 			name = Release;
 		};
+		7B69964D1819534000CAD9E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KFURLBar/KFURLBar-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include/$PRODUCT_NAME;
+			};
+			name = Debug;
+		};
+		7B69964E1819534000CAD9E2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KFURLBar/KFURLBar-Prefix.pch";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = include/$PRODUCT_NAME;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -328,7 +430,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1D1706C816EA342F008920CC /* Build configuration list for PBXNativeTarget "KFURLBar" */ = {
+		1D1706C816EA342F008920CC /* Build configuration list for PBXNativeTarget "KFURLBarDemo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D1706C916EA342F008920CC /* Debug */,
@@ -336,6 +438,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		7B69964C1819534000CAD9E2 /* Build configuration list for PBXNativeTarget "KFURLBar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7B69964D1819534000CAD9E2 /* Debug */,
+				7B69964E1819534000CAD9E2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
