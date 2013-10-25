@@ -436,7 +436,7 @@
 
 - (void)setAddressString:(NSString *)addressString
 {
-    self.urlTextField.stringValue = addressString;
+    if (addressString) self.urlTextField.stringValue = addressString;
 }
 
 
